@@ -2,12 +2,26 @@
 import express from "express";
 
 // internal imports
-import { getInbox } from "../controller/inboxController.js";
+import { getInbox, searchUser, addConversation, getMessages, sendMessage } from "../controller/inboxController.js";
 import decorateHtmlResponse from "../middlewares/common/decorateHtmlResponse.js";
+import { checkLogin } from "../middlewares/common/checkLogin.js";
+import attachmentUpload from "../middlewares/inbox/attachmentUpload.js";
 
 const router = express.Router();
 
 // inbox page
-router.get("/", decorateHtmlResponse("Inbox"), getInbox);
+router.get("/", decorateHtmlResponse("Inbox"), checkLogin, getInbox);
 
-export default router 
+// search user for conversation
+router.post("/search", checkLogin, searchUser);
+
+// add conversation
+router.post("/conversation", checkLogin, addConversation);
+
+// get messages of a conversation
+router.get("/messages/:conversation_id", checkLogin, getMessages);
+
+// send message
+router.post("/message", checkLogin, attachmentUpload, sendMessage);
+
+export default router;
